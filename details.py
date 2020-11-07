@@ -44,7 +44,6 @@ def getDetails(svc_id: str):
     return HTML_DETAILS.format(
             table)
 
-
 HTML_DETAILS = """<html><body>
         <form>
           Show course number: <input type='text' name='courseNo' value=''>
