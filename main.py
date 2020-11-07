@@ -13,6 +13,7 @@ from details import *
 @bottle.route('/details')
 def details():
     svc_id = request.query['svc_id']
+    return getDetails(svc_id)
 
 
 
