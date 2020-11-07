@@ -33,12 +33,7 @@ def hello():
         selectedCourseno = request.args["blah"]
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
-<<<<<<< HEAD
      
-=======
-    con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp', host=dbconfig.DB_HOST) 
-    cursor = con.cursor() 
->>>>>>> 07c1d746c491c23bfc0694a91e9e2d237d43dbd0
 
     cursor.execute("""
     select Service_ID, Svc_DateTime, Theme_Event
