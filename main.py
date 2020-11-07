@@ -12,7 +12,7 @@ from details import *
 
 @bottle.route('/details')
 def details():
-    svc_id = request.query['svc_id']
+    svc_id = bottle.request.params['svc_id']
     return getDetails(svc_id)
 
 
@@ -26,7 +26,7 @@ def hello():
 
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
-    con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp', host=dbconfig.DB_HOST) 
+    con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wso_mysql', host=dbconfig.DB_HOST) 
     cursor = con.cursor() 
 
     cursor.execute("""
