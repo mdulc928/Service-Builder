@@ -8,6 +8,13 @@ from datetime import datetime
 import time
 from mysql.connector import connect
 import dbconfig
+from details import *
+
+@bottle.route('/details')
+def details():
+    svc_id = request.query['svc_id']
+
+
 
 @bottle.route('/')
 def hello():
@@ -18,42 +25,44 @@ def hello():
 
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
-    con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='univdb', host=dbconfig.DB_HOST) 
+    con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp', host=dbconfig.DB_HOST) 
     cursor = con.cursor() 
 
-    if selectedCourseno != None and selectedCourseno != "":
-        cursor.execute("""
-        select *
-        from course
-        where courseno = %s
-        """, (selectedCourseno,))
-    else:
-        cursor.execute("""
-        select *
-        from course
-        """)
+    cursor.execute("""
+    select Service_ID, Svc_DateTime, Theme_Event
+    from service
+    """)
 
     # Retrieve results
     result = cursor.fetchall()
 
+    #result.insert(2, )
+    
     table = """
     <table>
     <tr>
-        <td>Course No
-        <td>Course Desc
-        <td>Course Units
+        <td>Date
+        <td>Time
+        <td>Theme/Event
     </tr>
     """
 
     for row in result:
-        (courseno, coursedesc, courseunits) = row
+        date = row[1].strftime("%m/%d/%Y")
+        time = row[1].strftime("%I:%M %p")
+        theme = row[2]
+        svc_id = row[0]
         tableRow = """
         <tr>
-            <td>{0}
+            <td>
+                <form method='get' action='details'>
+                    <button type='submit' name='svc_id' value='{0}'>Details</button>
+                </form>
             <td>{1}
             <td>{2}
+            <td>{3}
         </tr>
-        """.format(courseno, coursedesc, courseunits)
+        """.format(svc_id, date, time, theme)
         table += tableRow
 
     table += "</table>"
