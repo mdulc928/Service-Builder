@@ -3,13 +3,15 @@
 #   pip install mysql-connector-python
 
 
-import bottle
+from flask import Flask
 from datetime import datetime
 import time
 from mysql.connector import connect
 import dbconfig
 
-@bottle.route('/')
+app = Flask(__name__)
+
+@app.route('/')
 def hello():
     qty = 0
     selectedCourseno = None
@@ -67,6 +69,10 @@ HTML_DOC = """<html><body>
         </form>
         {0}</body></html>"""
 
+
+@app.route("/create")
+def create():
+    
 # Launch the BottlePy dev server
 if __name__ == "__main__":
-    bottle.run(host='', port=5000, debug=True)
+    app.run(host='', port=5000, debug=True)
