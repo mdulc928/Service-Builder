@@ -10,7 +10,7 @@ from mysql.connector import connect
 import dbconfig
 from details import *
 
-@bottle.route('/details')
+@app.route('/details')
 def details():
     svc_id = request.query['svc_id']
     return getDetails(svc_id)
@@ -29,8 +29,6 @@ def hello():
     global cursor
     qty = 0
     selectedCourseno = None
-    if 'courseNo' in request.args:
-        selectedCourseno = request.args["blah"]
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
      
