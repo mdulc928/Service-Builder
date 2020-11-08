@@ -2,7 +2,6 @@
 # To use this app:
 #   pip install mysql-connector-python
 
-
 from flask import Flask, request
 from datetime import datetime
 import time
@@ -10,19 +9,18 @@ from mysql.connector import connect
 import dbconfig
 from details import *
 
-@app.route('/details')
-def details():
-    svc_id = bottle.request.params['svc_id']
-    return getDetails(svc_id)
-
-
-
 app = Flask(__name__)
 
 con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='univdb', host=dbconfig.DB_HOST) 
 cursor = con.cursor()
 
 error_msg = ["Another service is being held at the same time."]
+
+@app.route('/details')
+def details():
+    svc_id = request.query['svc_id']
+    return getDetails(svc_id)
+
 
 @app.route('/')
 def hello():
