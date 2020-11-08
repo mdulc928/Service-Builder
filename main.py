@@ -11,14 +11,14 @@ from details import *
 
 app = Flask(__name__)
 
-con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='univdb', host=dbconfig.DB_HOST) 
+con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wso_mysql', host=dbconfig.DB_HOST) 
 cursor = con.cursor()
 
 error_msg = ["Another service is being held at the same time."]
 
 @app.route('/details')
 def details():
-    svc_id = request.query['svc_id']
+    svc_id = request.args.get('svc_id')
     return getDetails(svc_id)
 
 
@@ -82,9 +82,20 @@ HTML_DOC = """<html><body>
 def create():
     global cursor
     
-    #do checks
-    svc_id, svc_datetime, theme = (0, 0, 0)
+    cursor.execute("""
+    select MAX(Service_ID)
+    from service
+    """)
 
+    # Retrieve results
+    result = cursor.fetchall()
+
+    #do checks
+    svc_id = int(result[0][0]) + 1
+    svc_datetime = request.args.get('Svc_DateTime')
+    theme = request.args.get('Theme_Event')
+
+    songleader = request.args.get('songleader')
 
     #create service
     cursor.callproc('create_service', (svc_id, svc_datetime, theme))

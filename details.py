@@ -10,17 +10,19 @@ def getDetails(svc_id: str):
     cursor.execute("""
     select *
     from serviceview
-    """)
+    where Service_ID = %s
+    """, (svc_id,))
     
     result = cursor.fetchall()
 
     #result.insert(2, )
     
     table = """
+    <style> th { border: 3px solid black; background-color: gray }</style>
     <table style="border: 3px solid black; border-collapse: collapse">
     <tr>
         <th>Date
-        <th style="background-color: yellow">Theme
+        <th>Theme
         <th>Song Leader
         <th>Organist
         <th>Pianist
@@ -45,8 +47,17 @@ def getDetails(svc_id: str):
             table)
 
 HTML_DETAILS = """<html><body>
-        <form>
-          Show course number: <input type='text' name='courseNo' value=''>
+        <h2>Service Plan</h2>
+        {0}</body></html>
+        &nbsp; 
+        <h2>Create New Service</h2>
+        <form method='get' action='create'>
+          Date and time: <input type='datetime-local' name='Svc_DateTime' value=''>
+          &nbsp;
+          Theme or Event: <input type='text' name='Theme_Event' value=''>
+          &nbsp;
+          Song leader: <input type='text' name='songleader' value=''>
+          <br>
           <input type='submit' value='Go!'>
-        </form>
-        {0}</body></html>"""
+        </form>"""
+        
