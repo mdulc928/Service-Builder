@@ -27,8 +27,6 @@ error_msg = ["Another service is being held at the same time."]
 @app.route('/')
 def hello():
     global cursor
-    qty = 0
-    selectedCourseno = None
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
      
