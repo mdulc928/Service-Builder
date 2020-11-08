@@ -97,6 +97,9 @@ def create():
 
     songleader = request.args.get('songleader')
 
+    #notes to self: Will need to create drop for each row in item column that is modifiable
+    #               for each field tmplate returns create input textbox with dropdown.
+
     #create service
     cursor.callproc('create_service', (svc_id, svc_datetime, theme))
     #create update fills role
