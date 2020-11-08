@@ -1,14 +1,15 @@
-CREATE DEFINER=`root`@`localhost` PROCEDURE `create_service`(IN svc_id INT, IN service_datetime DATETIME, IN theme VARCHAR(0), in person_id int, in tmpltsvc_id int, out error_msg int)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_service`(IN service_datetime DATETIME, IN theme VARCHAR(0), in person_id int, in tmpltsvc_id int, out error_msg int)
 begin
 	declare chk_id int;
-    select id into chk_id from service 
+    declare svc_id int;
+    select svc_id, max(Service_ID) + 1 into chk_id, svc_id from service 
     where Svc_DateTime like service_datetime;
     
     if chk_id is not null then
 		set error_msg = 1;
 	else 
 		INSERT INTO `wsoapp`.`service` (`Service_ID`, `Svc_DateTime`,`Theme_Event`)
-		VALUES (id, service_datetime, theme);
+		VALUES (svc_id, service_datetime, theme);
         
         if person_id is not null then        
 			insert into `wsoapp`.`fills_role` values(person_id, svc_id, 'S', 'Y');
