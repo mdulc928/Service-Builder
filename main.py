@@ -103,6 +103,7 @@ def create():
     #create service
     cursor.callproc('create_service', (svc_id, svc_datetime, theme))
     #create update fills role
+    return getDetails(svc_id)
     
 # Launch the BottlePy dev server
 if __name__ == "__main__":
