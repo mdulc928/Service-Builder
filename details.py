@@ -70,6 +70,7 @@ HTML_DETAILS = """<html><body>
           &nbsp;
           Song leader: 
           <select name='songleader' value=''>
+            <option value=""></option>
             {2}
           </select>
           <br>
