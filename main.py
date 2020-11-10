@@ -95,13 +95,15 @@ def create():
     svc_datetime = request.args.get('Svc_DateTime')
     theme = request.args.get('Theme_Event')
 
-    songleader = request.args.get('songleader')
+    songleader = int(request.args.get('songleader'))
+
+
 
     #notes to self: Will need to create drop for each row in item column that is modifiable
     #               for each field tmplate returns create input textbox with dropdown.
 
     #create service
-    cursor.callproc('create_service', (svc_id, svc_datetime, theme))
+    cursor.callproc('create_service', (svc_datetime, theme, songleader, svc_id, 0))
     #create update fills role
     return getDetails(svc_id)
     
