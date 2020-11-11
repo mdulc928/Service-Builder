@@ -1,5 +1,6 @@
 from mysql.connector import connect
 import dbconfig
+from datetime import date
 
 def getDetails(svc_id: str):
         # We don't close the following explicitly because they are automatically closed
@@ -9,11 +10,18 @@ def getDetails(svc_id: str):
 
     cursor.execute("""
     select *
-    from serviceview
+    from service_view
     where Service_ID = %s
     """, (svc_id,))
     
     result = cursor.fetchall()
+
+    cursor.execute("""
+    SELECT *
+    FROM person
+    """)
+
+    people = cursor.fetchall()
 
     #result.insert(2, )
     
@@ -41,10 +49,14 @@ def getDetails(svc_id: str):
             tableRow += f"""<td style="border: 2px solid black">{item}"""
         tableRow += "</tr>"
         table += tableRow
+    
+    optionStr = ""
+    for person in people:
+        optionStr += f"""<option value="{person[0]}">{person[1] + " " + person[2]}</option>"""
 
     table += "</table>"
     return HTML_DETAILS.format(
-            table)
+            table, result[0][2], optionStr)
 
 HTML_DETAILS = """<html><body>
         <h2>Service Plan</h2>
@@ -54,9 +66,13 @@ HTML_DETAILS = """<html><body>
         <form method='get' action='create'>
           Date and time: <input type='datetime-local' name='Svc_DateTime' value=''>
           &nbsp;
-          Theme or Event: <input type='text' name='Theme_Event' value=''>
+          Theme or Event: <input type='text' name='Theme_Event' value='{1}'>
           &nbsp;
-          Song leader: <input type='text' name='songleader' value=''>
+          Song leader: 
+          <select name='songleader' value=''>
+            <option value=""></option>
+            {2}
+          </select>
           <br>
           <input type='submit' value='Go!'>
         </form>"""

@@ -40,11 +40,14 @@ def hello():
     #result.insert(2, )
     
     table = """
-    <table>
+    <style> th { border: 3px solid black; background-color: gray }</style>
+    <style> td { border: 2px solid black } </style>
+    <table style="border: 3px solid black; border-collapse: collapse">
     <tr>
-        <td>Date
-        <td>Time
-        <td>Theme/Event
+        <th>Details
+        <th>Date
+        <th>Time
+        <th>Theme/Event
     </tr>
     """
 
@@ -71,10 +74,7 @@ def hello():
             table)
 
 HTML_DOC = """<html><body>
-        <form>
-          Show course number: <input type='text' name='courseNo' value=''>
-          <input type='submit' value='Go!'>
-        </form>
+        <h1>Services</h1>
         {0}</body></html>"""
 
 
