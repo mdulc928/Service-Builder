@@ -3,7 +3,7 @@
 #   pip install mysql-connector-python
 
 from flask import Flask, request
-from datetime import datetime
+from datetime import *
 import time
 from mysql.connector import connect
 import dbconfig
@@ -11,10 +11,10 @@ from details import *
 
 app = Flask(__name__)
 
-con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wso_mysql', host=dbconfig.DB_HOST) 
+con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp2', host=dbconfig.DB_HOST) 
 cursor = con.cursor()
 
-error_msg = ["Another service is being held at the same time."]
+error_msg = ["New service was successfully created!", "Another service is being held at the same time."]
 
 @app.route('/details')
 def details():
@@ -81,28 +81,30 @@ HTML_DOC = """<html><body>
 @app.route("/create")
 def create():
     global cursor
-    
-    cursor.execute("""
-    select MAX(Service_ID)
-    from service
-    """)
 
-    # Retrieve results
-    result = cursor.fetchall()
+    svc_datetime, theme, songleader = (0, None, None)
+    if 'Svc_DateTime' in request.args:
+        svc_datetime = request.args.get('Svc_DateTime')
+    else:
+        return "<html>A service must be selected.</html>"
 
-    #do checks
-    svc_id = int(result[0][0]) + 1
-    svc_datetime = request.args.get('Svc_DateTime')
-    theme = request.args.get('Theme_Event')
-
-    songleader = request.args.get('songleader')
+    if "Theme_Event" in request.args:
+        theme = request.args.get('Theme_Event')
+    if "songleader" in request.args:
+        try: 
+            songleader = int(request.args.get('songleader'))
+        except:
+            pass
 
     #notes to self: Will need to create drop for each row in item column that is modifiable
     #               for each field tmplate returns create input textbox with dropdown.
 
     #create service
-    cursor.callproc('create_service', (svc_id, svc_datetime, theme))
+
+    result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, 0))
     #create update fills role
+
+    return f"<html>{error_msg[result[3]]}</html>"
     
 # Launch the BottlePy dev server
 if __name__ == "__main__":
