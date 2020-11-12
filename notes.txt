@@ -9,3 +9,11 @@ The server connection problem:
 Progress though:
     * Will be able to work on add items view.
     * Left the db named wsoapp2 since we were supposed already.
+
+connection problem detected and fixed:
+    * because we were creating two instances of the connection, I was getting an error since we're not 
+    actually modifying the database, and were trying to pull from it.
+
+Mostly working, still needing to do:
+    * dropdowns
+    * songleader needs to show on the new service.

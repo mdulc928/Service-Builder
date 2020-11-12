@@ -18,8 +18,9 @@ error_msg = ["New service was successfully created!", "Another service is being 
 
 @app.route('/details')
 def details():
+    global cursor
     svc_id = request.args.get('svc_id')
-    return getDetails(svc_id)
+    return getDetails(svc_id, cursor)
 
 
 @app.route('/')
@@ -82,7 +83,8 @@ HTML_DOC = """<html><body>
 def create():
     global cursor
 
-    svc_datetime, theme, songleader = (0, None, None)
+    svc_datetime, theme, songleader, tmpltsvc_id = (0, None, None, None)
+
     if 'Svc_DateTime' in request.args:
         svc_datetime = request.args.get('Svc_DateTime')
     else:
@@ -90,9 +92,15 @@ def create():
 
     if "Theme_Event" in request.args:
         theme = request.args.get('Theme_Event')
+
     if "songleader" in request.args:
         try: 
             songleader = int(request.args.get('songleader'))
+        except:
+            pass
+    if "tmpltsvc_id" in request.args:
+        try: 
+            tmpltsvc_id = int(request.args.get('tmpltsvc_id'))
         except:
             pass
 
@@ -101,10 +109,11 @@ def create():
 
     #create service
 
-    result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, 0))
-    #create update fills role
-
-    return f"<html>{error_msg[result[3]]}</html>"
+    result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, tmpltsvc_id, 0, 0))
+    svc_id = result[5]
+  
+    
+    return f"<html>{getDetails(svc_id, cursor)}</html>"
     
 # Launch the BottlePy dev server
 if __name__ == "__main__":
