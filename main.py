@@ -3,7 +3,7 @@
 #   pip install mysql-connector-python
 
 from flask import Flask, request
-from datetime import datetime
+from datetime import *
 import time
 from mysql.connector import connect
 import dbconfig
@@ -11,15 +11,16 @@ from details import *
 
 app = Flask(__name__)
 
-con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wso_mysql', host=dbconfig.DB_HOST) 
+con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp2', host=dbconfig.DB_HOST) 
 cursor = con.cursor()
 
-error_msg = ["Another service is being held at the same time."]
+error_msg = ["New service was successfully created!", "Another service is being held at the same time."]
 
 @app.route('/details')
 def details():
+    global cursor
     svc_id = request.args.get('svc_id')
-    return getDetails(svc_id)
+    return getDetails(svc_id, cursor)
 
 
 @app.route('/')
@@ -81,31 +82,38 @@ HTML_DOC = """<html><body>
 @app.route("/create")
 def create():
     global cursor
-    
-    cursor.execute("""
-    select MAX(Service_ID)
-    from service
-    """)
 
-    # Retrieve results
-    result = cursor.fetchall()
+    svc_datetime, theme, songleader, tmpltsvc_id = (0, None, None, None)
 
-    #do checks
-    svc_id = int(result[0][0]) + 1
-    svc_datetime = request.args.get('Svc_DateTime')
-    theme = request.args.get('Theme_Event')
+    if 'Svc_DateTime' in request.args:
+        svc_datetime = request.args.get('Svc_DateTime')
+    else:
+        return "<html>A service must be selected.</html>"
 
-    songleader = int(request.args.get('songleader'))
+    if "Theme_Event" in request.args:
+        theme = request.args.get('Theme_Event')
 
-
+    if "songleader" in request.args:
+        try: 
+            songleader = int(request.args.get('songleader'))
+        except:
+            pass
+    if "tmpltsvc_id" in request.args:
+        try: 
+            tmpltsvc_id = int(request.args.get('tmpltsvc_id'))
+        except:
+            pass
 
     #notes to self: Will need to create drop for each row in item column that is modifiable
     #               for each field tmplate returns create input textbox with dropdown.
 
     #create service
-    cursor.callproc('create_service', (svc_datetime, theme, songleader, svc_id, 0))
-    #create update fills role
-    return getDetails(svc_id)
+
+    result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, tmpltsvc_id, 0, 0))
+    svc_id = result[5]
+  
+    
+    return f"<html>{getDetails(svc_id, cursor)}</html>"
     
 # Launch the BottlePy dev server
 if __name__ == "__main__":

@@ -1,0 +1,19 @@
+11/11/2020----------------
+The server connection problem: 
+    * It looks like the python program must not be running for mysql to allow to alter the procedures
+    while a client is connected. I'm thinking it's to prevent bad data retrieval and manipulation.
+    * It also looks like any changes made to the database during the program execution only exists inside
+    the program execution time. So, while the particular time we are running the flask server, the changes
+    persist, but as soon as we press Ctrl+C, all changes are lost.
+
+Progress though:
+    * Will be able to work on add items view.
+    * Left the db named wsoapp2 since we were supposed already.
+
+connection problem detected and fixed:
+    * because we were creating two instances of the connection, I was getting an error since we're not 
+    actually modifying the database, and were trying to pull from it.
+
+Mostly working, still needing to do:
+    * dropdowns
+    * songleader needs to show on the new service.

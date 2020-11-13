@@ -2,12 +2,12 @@ from mysql.connector import connect
 import dbconfig
 from datetime import date
 
-def getDetails(svc_id: str):
+def getDetails(svc_id: str, cursor):
         # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
-    con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wso_mysql', host=dbconfig.DB_HOST) 
-    cursor = con.cursor() 
-
+    #con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp2', host=dbconfig.DB_HOST) 
+    #cursor = con.cursor() 
+    
     cursor.execute("""
     select *
     from service_view
@@ -56,7 +56,7 @@ def getDetails(svc_id: str):
 
     table += "</table>"
     return HTML_DETAILS.format(
-            table, result[0][2], optionStr)
+            table, result[0][2], optionStr, svc_id)
 
 HTML_DETAILS = """<html><body>
         <h2>Service Plan</h2>
@@ -64,7 +64,7 @@ HTML_DETAILS = """<html><body>
         &nbsp; 
         <h2>Create New Service</h2>
         <form method='get' action='create'>
-          Date and time: <input type='datetime-local' name='Svc_DateTime' value=''>
+          Date and time: <input type='datetime-local' name='Svc_DateTime' value='' required>
           &nbsp;
           Theme or Event: <input type='text' name='Theme_Event' value='{1}'>
           &nbsp;
@@ -75,5 +75,6 @@ HTML_DETAILS = """<html><body>
           </select>
           <br>
           <input type='submit' value='Go!'>
+          <input width='0' height='0' type='number' name='tmpltsvc_id' value='{3}'></input>
         </form>"""
         

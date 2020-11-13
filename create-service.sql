@@ -8,11 +8,11 @@ begin
     if chk_id is not null then
 		set error_msg = 1;
 	else 
-		INSERT INTO `wsoapp`.`service` (`Service_ID`, `Svc_DateTime`,`Theme_Event`)
+		INSERT INTO `wso_mysql`.`service` (`Service_ID`, `Svc_DateTime`,`Theme_Event`)
 		VALUES (id, service_datetime, theme);
         
         if person_id is not null then        
-			insert into `wsoapp`.`fills_role` values(person_id, svc_id, 'S', 'Y');
+			insert into `wso_mysql`.`fills_role` values(person_id, svc_id, 'S', 'Y');
         end if;
         
         if tmpltsvc_id is not null then
