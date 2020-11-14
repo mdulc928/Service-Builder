@@ -108,13 +108,13 @@ def create():
     #               for each field tmplate returns create input textbox with dropdown.
 
     #create service
-
     result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, tmpltsvc_id, 0, 0))
     svc_id = result[5]
-  
+    con.commit()
     
     return f"<html>{getDetails(svc_id, cursor)}</html>"
     
 # Launch the BottlePy dev server
 if __name__ == "__main__":
     app.run(host='', port=5000, debug=True)
+    con.close()

@@ -3,7 +3,7 @@ import dbconfig
 from datetime import date
 
 def getDetails(svc_id: str, cursor):
-        # We don't close the following explicitly because they are automatically closed
+    # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
     #con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp2', host=dbconfig.DB_HOST) 
     #cursor = con.cursor() 
@@ -66,7 +66,7 @@ HTML_DETAILS = """<html><body>
         <form method='get' action='create'>
           Date and time: <input type='datetime-local' name='Svc_DateTime' value='' required>
           &nbsp;
-          Theme or Event: <input type='text' name='Theme_Event' value='{1}'>
+          Theme or Event: <input type='text' name='Theme_Event' value="{1}">
           &nbsp;
           Song leader: 
           <select name='songleader' value=''>
