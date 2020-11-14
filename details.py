@@ -75,6 +75,6 @@ HTML_DETAILS = """<html><body>
           </select>
           <br>
           <input type='submit' value='Go!'>
-          <input width='0' height='0' type='number' name='tmpltsvc_id' value='{3}'></input>
+          <input type='hidden' name='tmpltsvc_id' value='{3}'></input>
         </form>"""
         
