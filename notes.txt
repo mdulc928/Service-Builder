@@ -17,3 +17,6 @@ connection problem detected and fixed:
 Mostly working, still needing to do:
     * dropdowns
     * songleader needs to show on the new service.
+
+11/14/2020:
+    * returning error code if same datetime.

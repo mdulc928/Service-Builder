@@ -111,8 +111,9 @@ def create():
     result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, tmpltsvc_id, 0, 0))
     svc_id = result[5]
     con.commit()
-    
-    return f"<html>{getDetails(svc_id, cursor)}</html>"
+       
+    return f"""<html><p style="color:{['green', 'red'][result[4]]};
+    font-size:150%;">{error_msg[result[4]]}</p>{getDetails([svc_id, tmpltsvc_id][result[4]], cursor)}</html>"""
     
 # Launch the BottlePy dev server
 if __name__ == "__main__":
