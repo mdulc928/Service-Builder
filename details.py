@@ -5,8 +5,6 @@ from datetime import date
 def getDetails(svc_id: str, cursor):
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
-    #con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp2', host=dbconfig.DB_HOST) 
-    #cursor = con.cursor() 
     
     cursor.execute("""
     select *
