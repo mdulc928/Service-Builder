@@ -23,6 +23,13 @@ def getDetails(svc_id: str, cursor):
 
     people = cursor.fetchall()
 
+    cursor.execute("""
+    SELECT *
+    FROM song
+    """)
+
+    songs = cursor.fetchall()
+
     #result.insert(2, )
     
     table = """
@@ -45,8 +52,22 @@ def getDetails(svc_id: str, cursor):
     for row in result:
         (Svc_DateTime, Theme_Event, songleader, organist, pianist, Seq_Num, Description, title, name, notes) = row[1:]
         tableRow = "<tr>"
+        itemCount = 0
         for item in row[1:]:
-            tableRow += f"""<td style="border: 2px solid black">{item}"""
+            if itemCount == 7:
+                tableRow += "<td><select>"
+                if row[8] == None:
+                    tableRow += "<option value="" selected></option>"
+                else:
+                    tableRow += "<option value=""></option>"
+                for song in songs:
+                    if song[2] != None and row[8] != None and song[2] in row[8]:
+                        tableRow += f"""<option value="{song[0]}" selected>{song[2]}</option>"""
+                    tableRow += f"""<option value="{song[0]}">{song[2]}</option>"""
+                tableRow += "</select></td>"
+            else:
+                tableRow += f"""<td style="border: 2px solid black">{item}"""
+            itemCount += 1
         tableRow += "</tr>"
         table += tableRow
     
