@@ -28,7 +28,7 @@ WHERE
 			select max(Service_Item_ID) into newitem_id from service_item;
 			
 			insert into service_item
-				select @newitem_id + 1, svc_id, Seq_Num, Event_Type_ID, null, null, 'Y', null, null, null
+				select @newitem_id + 1, svc_id, Seq_Num, Event_Type_ID, null, null, Confirmed, null, null, null
                 from service_item where Service_ID = tmpltsvc_id;                
 		end if;
         

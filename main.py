@@ -97,12 +97,12 @@ def create():
         try: 
             songleader = int(request.args.get('songleader'))
         except:
-            pass
+            songleader = None
     if "tmpltsvc_id" in request.args:
         try: 
             tmpltsvc_id = int(request.args.get('tmpltsvc_id'))
         except:
-            pass
+            tmpltsvc_id = None
 
     #notes to self: Will need to create drop for each row in item column that is modifiable
     #               for each field tmplate returns create input textbox with dropdown.
@@ -114,7 +114,22 @@ def create():
        
     return f"""<html><p style="color:{['green', 'red'][result[4]]};
     font-size:150%;">{error_msg[result[4]]}</p>{getDetails([svc_id, tmpltsvc_id][result[4]], cursor)}</html>"""
-    
+
+@app.route('/updatesong')
+def updatesong():
+    global cursor
+    print(f"supposed to update song{request.args.get('songID')}")
+    svc_id = int(request.args.get("svcid"))
+    svc_item_id = int(request.args.get("svcitemid"))
+    songID = int(request.args.get("songID"))
+
+    cursor.execute("""
+        update service_item
+        set Song_ID = %s where Service_Item_ID = %s
+    """, (songID, svc_item_id, ))
+    con.commit()
+    return f"<html>{getDetails(svc_id, cursor)}</html>"
+
 # Launch the BottlePy dev server
 if __name__ == "__main__":
     app.run(host='', port=5000, debug=True)

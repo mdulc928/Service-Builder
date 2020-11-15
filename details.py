@@ -17,7 +17,8 @@ def getDetails(svc_id: str, cursor):
     result = cursor.fetchall()
 
     cursor.execute("""
-    SELECT event_type.Description, service_item.Title, CONCAT(person.First_Name, ' ', person.Last_Name) AS Person, Confirmed, ensemble.Name, song.Title AS Song, Notes
+    SELECT event_type.Description, service_item.Title, CONCAT(person.First_Name, ' ', person.Last_Name) AS Person, Confirmed,
+    ensemble.Name, song.Title AS Song, Notes, service_item.Service_Item_ID
     FROM service_item LEFT JOIN person ON service_item.Person_ID = person.Person_ID
     LEFT JOIN ensemble ON ensemble.Ensemble_ID = service_item.Service_Item_ID
     LEFT JOIN song ON song.Song_ID = service_item.Song_ID
@@ -77,19 +78,23 @@ def getDetails(svc_id: str, cursor):
     for row in service_items:
         tableRow = "<tr>"
         itemCount = 0
-        for item in row:
+        songform = f"""<form  method='get' action="updatesong">
+        <input type='hidden' name='svcid' value='{svc_id}'></input>
+        <input type='hidden' name='svcitemid' value='{row[7]}'></input>
+        """
+        for item in row[:7]:
             if itemCount == 5: #song title index
-                tableRow += """<td style="border: 2px solid black"><select>"""
+                tableRow += f"""<td style="border: 2px solid black">{songform}<select onchange='this.form.submit()' name='songID'>"""
                 if row[5] == None:
                     tableRow += "<option value="" selected></option>"
                 else:
                     tableRow += "<option value=""></option>"
+
                 for song in songs:
                     if song[2] != None and row[5] != None and song[2] in row[5]:
                         tableRow += f"""<option value="{song[0]}" selected>{song[2]}</option>"""
                     tableRow += f"""<option value="{song[0]}">{song[2]}</option>"""
-                tableRow += "</select></td>"
-
+                tableRow += "</select></form></td>"
             else:
                 tableRow += f"""<td style="border: 2px solid black">{item}"""
             itemCount += 1

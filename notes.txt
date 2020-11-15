@@ -18,5 +18,8 @@ Mostly working, still needing to do:
     * dropdowns
     * songleader needs to show on the new service.
 
-11/14/2020:
+11/14/2020: 
     * returning error code if same datetime.
+    * finished updating songs method 1 hr
+    * will need to bug check, and do some error handling - 
+    * will also need to adjust the table dimensions again :D
