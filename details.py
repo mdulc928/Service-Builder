@@ -25,12 +25,12 @@ def getDetails(svc_id: str, cursor):
 
     cursor.execute("""
     SELECT *
-    FROM song
+    FROM songusageview
+    ORDER BY LastUsedDate DESC
+    LIMIT 20
     """)
 
     songs = cursor.fetchall()
-
-    #result.insert(2, )
     
     table = """
     <style> th { border: 3px solid black; background-color: gray }</style>
@@ -54,7 +54,7 @@ def getDetails(svc_id: str, cursor):
         tableRow = "<tr>"
         itemCount = 0
         for item in row[1:]:
-            if itemCount == 7:
+            if itemCount == 7: #song title index
                 tableRow += "<td><select>"
                 if row[8] == None:
                     tableRow += "<option value="" selected></option>"
@@ -65,6 +65,7 @@ def getDetails(svc_id: str, cursor):
                         tableRow += f"""<option value="{song[0]}" selected>{song[2]}</option>"""
                     tableRow += f"""<option value="{song[0]}">{song[2]}</option>"""
                 tableRow += "</select></td>"
+                
             else:
                 tableRow += f"""<td style="border: 2px solid black">{item}"""
             itemCount += 1
