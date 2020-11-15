@@ -1,4 +1,10 @@
-# Requires the Bottle and MySQL libraries
+#-----------------------------------------------------
+#File: details.py
+#Created by: Colten Shipe and Melchisedek Dulcio
+#-----------------------------------------------------
+
+
+# Requires the Flask and MySQL libraries
 # To use this app:
 #   pip install mysql-connector-python
 
@@ -16,30 +22,29 @@ cursor = con.cursor()
 
 error_msg = ["New service was successfully created!", "Another service is being held at the same time."]
 
-@app.route('/details')
+@app.route('/details')  #Calls getDetails()
 def details():
     global cursor
     svc_id = request.args.get('svc_id')
     return getDetails(svc_id, cursor)
 
-
+#Home page of the website that lists services
 @app.route('/')
-def hello():
+def home():
     global cursor
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
      
-
+    #Get service information
     cursor.execute("""
-    select Service_ID, Svc_DateTime, Theme_Event
-    from service
+    SELECT Service_ID, Svc_DateTime, Theme_Event
+    FROM service
     """)
 
     # Retrieve results
     result = cursor.fetchall()
 
-    #result.insert(2, )
-    
+    #Start table
     table = """
     <style> th { border: 3px solid black; background-color: gray }</style>
     <style> td { border: 2px solid black } </style>
@@ -53,6 +58,7 @@ def hello():
     """
 
     for row in result:
+        #Pull date and time from datetime
         date = row[1].strftime("%m/%d/%Y")
         time = row[1].strftime("%I:%M %p")
         theme = row[2]
@@ -79,12 +85,14 @@ HTML_DOC = """<html><body>
         {0}</body></html>"""
 
 
+#Called when creating a new service
 @app.route("/create")
 def create():
     global cursor
 
-    svc_datetime, theme, songleader, tmpltsvc_id = (0, None, None, None)
+    svc_datetime, theme, songleader, tmpltsvc_id = (0, None, None, None) #initialize variables
 
+    #Get values from the URL
     if 'Svc_DateTime' in request.args:
         svc_datetime = request.args.get('Svc_DateTime')
     else:
@@ -103,9 +111,6 @@ def create():
             tmpltsvc_id = int(request.args.get('tmpltsvc_id'))
         except:
             pass
-
-    #notes to self: Will need to create drop for each row in item column that is modifiable
-    #               for each field tmplate returns create input textbox with dropdown.
 
     #create service
     result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, tmpltsvc_id, 0, 0))

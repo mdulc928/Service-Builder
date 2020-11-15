@@ -1,3 +1,9 @@
+#-----------------------------------------------------
+#File: details.py
+#Created by: Colten Shipe and Melchisedek Dulcio
+#-----------------------------------------------------
+
+
 from mysql.connector import connect
 import dbconfig
 from datetime import date
@@ -6,14 +12,16 @@ def getDetails(svc_id: str, cursor):
     # We don't close the following explicitly because they are automatically closed
     # when the variables go out of scope when hello() returns
     
+    #Get service information
     cursor.execute("""
-    select *
-    from service_view
-    where Service_ID = %s
+    SELECT *
+    FROM service_view
+    WHERE Service_ID = %s
     """, (svc_id,))
     
     result = cursor.fetchall()
 
+    #Get service details
     cursor.execute("""
     SELECT event_type.Description, service_item.Title, CONCAT(person.First_Name, ' ', person.Last_Name) AS Person, Confirmed, ensemble.Name, song.Title AS Song, Notes
     FROM service_item LEFT JOIN person ON service_item.Person_ID = person.Person_ID
@@ -25,6 +33,7 @@ def getDetails(svc_id: str, cursor):
     
     service_items = cursor.fetchall()
 
+    #Get all people
     cursor.execute("""
     SELECT *
     FROM person
@@ -32,6 +41,7 @@ def getDetails(svc_id: str, cursor):
 
     people = cursor.fetchall()
 
+    #Get all songs
     cursor.execute("""
     SELECT *
     FROM songusageview
@@ -41,6 +51,7 @@ def getDetails(svc_id: str, cursor):
 
     songs = cursor.fetchall()
     
+    #Start table for service info
     table = """
     <style> th { border: 3px solid black; background-color: gray }</style>
     <table style="border: 3px solid black; border-collapse: collapse">
@@ -58,6 +69,7 @@ def getDetails(svc_id: str, cursor):
     table += tableRow
     table += "</table>"
 
+    #Start table for service details
     table += """
     &nbsp;
     <table style="border: 3px solid black; border-collapse: collapse">
@@ -72,20 +84,23 @@ def getDetails(svc_id: str, cursor):
     </tr>
     """
 
-    for row in service_items:
+    for row in service_items:   # row = Description, Title, Person, Confirmed, Name, Song, Notes
         tableRow = "<tr>"
-        itemCount = 0
+        itemCount = 0  #Checks which item we are at
         for item in row:
             if itemCount == 5: #song title index
                 tableRow += """<td style="border: 2px solid black"><select>"""
+                #If no song yet selected
                 if row[5] == None:
                     tableRow += "<option value="" selected></option>"
                 else:
                     tableRow += "<option value=""></option>"
+                #Create dropdown list of song options
                 for song in songs:
-                    if song[2] != None and row[5] != None and song[2] in row[5]:
+                    if song[2] != None and row[5] != None and song[2] in row[5]:  #Find the currently selected song
                         tableRow += f"""<option value="{song[0]}" selected>{song[2]}</option>"""
-                    tableRow += f"""<option value="{song[0]}">{song[2]}</option>"""
+                    else:
+                        tableRow += f"""<option value="{song[0]}">{song[2]}</option>"""
                 tableRow += "</select></td>"
 
             else:
@@ -94,6 +109,7 @@ def getDetails(svc_id: str, cursor):
         tableRow += "</tr>"
         table += tableRow
     
+    #Create a dropdown list of all people
     optionStr = ""
     for person in people:
         optionStr += f"""<option value="{person[0]}">{person[1] + " " + person[2]}</option>"""
