@@ -140,5 +140,8 @@ HTML_DETAILS = """<html><body>
           <br>
           <input type='submit' value='Go!'>
           <input type='hidden' name='tmpltsvc_id' value='{3}'></input>
+        </form>
+        <form method='get' action='/'>
+            <button type='submit' value=''>Home</button>
         </form>"""
         
