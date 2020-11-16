@@ -88,19 +88,19 @@ def getDetails(svc_id: str, cursor):
     for row in service_items:   # row = Description, Title, Person, Confirmed, Name, Song, Notes
         tableRow = "<tr>"
         itemCount = 0  #Checks which item we are at
-        songform = f"""<form  method='get' action="updatesong">
+        songform = f"""<form style="display:contents;" method='get' action="updatesong">
         <input type='hidden' name='svcid' value='{svc_id}'></input>
         <input type='hidden' name='svcitemid' value='{row[7]}'></input>
         """
         for item in row[:7]:
-            if itemCount == 5: #song title index
+            if itemCount == 5 and row[0] == "Cong. Song": #song title index
                 #If no song yet selected
                 tableRow += f"""<td style="border: 2px solid black">{songform}<select onchange='this.form.submit()' name='songID'>"""
                 if row[5] == None:
                     tableRow += "<option value="" selected></option>"
                 else:
                     tableRow += "<option value=""></option>"
-                    
+
                 #Create dropdown list of song options
                 for song in songs:
                     if song[2] != None and row[5] != None and song[2] in row[5]:  #Find the currently selected song

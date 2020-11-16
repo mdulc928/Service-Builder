@@ -20,7 +20,8 @@ app = Flask(__name__)
 con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp2', host=dbconfig.DB_HOST) 
 cursor = con.cursor()
 
-error_msg = ["New service was successfully created!", "Another service is being held at the same time."]
+error_msg = ["New service was successfully created!", "Another service is being held at the same time.", 
+            "Could not update song.", "The date field was not provided."]
 
 @app.route('/details')  #Calls getDetails()
 def details():
@@ -66,7 +67,7 @@ def home():
         tableRow = """
         <tr>
             <td>
-                <form method='get' action='details'>
+                <form style="display:contents;" method='get' action='details'>
                     <button type='submit' name='svc_id' value='{0}'>Details</button>
                 </form>
             <td>{1}
@@ -95,22 +96,23 @@ def create():
     #Get values from the URL
     if 'Svc_DateTime' in request.args:
         svc_datetime = request.args.get('Svc_DateTime')
+    
+        if "Theme_Event" in request.args:
+            theme = request.args.get('Theme_Event')
+
+        if "songleader" in request.args:
+            try: 
+                songleader = int(request.args.get('songleader'))
+            except:
+                songleader = None
+        if "tmpltsvc_id" in request.args:
+            try: 
+                tmpltsvc_id = int(request.args.get('tmpltsvc_id'))
+            except:
+                tmpltsvc_id = None
     else:
-        return "<html>A service must be selected.</html>"
-
-    if "Theme_Event" in request.args:
-        theme = request.args.get('Theme_Event')
-
-    if "songleader" in request.args:
-        try: 
-            songleader = int(request.args.get('songleader'))
-        except:
-            songleader = None
-    if "tmpltsvc_id" in request.args:
-        try: 
-            tmpltsvc_id = int(request.args.get('tmpltsvc_id'))
-        except:
-            tmpltsvc_id = None
+        return f"""<html><p style="color:red;
+    font-size:150%;">{error_msg[3]}{home()}</p></html>"""
 
     #create service
     result = cursor.callproc('create_service', (datetime.strptime(svc_datetime, "%Y-%m-%dT%H:%M"), theme, songleader, tmpltsvc_id, 0, 0))
@@ -123,16 +125,47 @@ def create():
 @app.route('/updatesong')
 def updatesong():
     global cursor
-    print(f"supposed to update song{request.args.get('songID')}")
-    svc_id = int(request.args.get("svcid"))
-    svc_item_id = int(request.args.get("svcitemid"))
-    songID = int(request.args.get("songID"))
+
+    svc_id, svc_item_id, songID = (None, None, None)
+
+    if "svcid" in request.args:
+        try:
+            svc_id = int(request.args.get("svcid"))
+        except:
+            svc_id = None
+
+    if "svcitemid" in request.args:
+        try:
+            svc_item_id = int(request.args.get("svcitemid"))
+        except:
+            if svc_id is not None:
+                return f"""<html><p style="color:red;
+                    font-size:150%;">{error_msg[2]}</p>{getDetails(svc_id, cursor)}</html>"""
+
+    if "songID" in request.args:        
+        songID = request.args.get("songID")
+        try:
+            songID = int(songID)
+        except: 
+            if songID == "":
+                songID = None
+            else:
+                if svc_id is not None:
+                    return f"""<html><p style="color:red;
+    font-size:150%;">{error_msg[2]}</p>{getDetails(svc_id, cursor)}</html>"""
+
 
     cursor.execute("""
         update service_item
-        set Song_ID = %s where Service_Item_ID = %s
+        set Song_ID = %s 
+        where Service_Item_ID = %s and Event_Type_ID = 5
     """, (songID, svc_item_id, ))
     con.commit()
+
+    if svc_id is None:
+        return f"""<html><p style="color:red;
+    font-size:150%;">{error_msg[2]}{home()}</p></html>"""
+
     return f"<html>{getDetails(svc_id, cursor)}</html>"
 
 # Launch the BottlePy dev server
