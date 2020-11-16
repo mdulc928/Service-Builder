@@ -21,7 +21,7 @@ con = connect(user=dbconfig.DB_USER, password=dbconfig.DB_PASS, database='wsoapp
 cursor = con.cursor()
 
 error_msg = ["New service was successfully created!", "Another service is being held at the same time.", 
-            "Could not update song.", "The date field was not provided."]
+            "Could not update song.", "The date field was not provided." ]
 
 @app.route('/details')  #Calls getDetails()
 def details():
