@@ -1,5 +1,5 @@
 #-----------------------------------------------------
-#File: details.py
+#File: main.py
 #Created by: Colten Shipe and Melchisedek Dulcio
 #-----------------------------------------------------
 
